@@ -1,26 +1,159 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base colors */
+  --background: 0 0% 98%;
+  --foreground: 0 0% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+  --primary: 0 0% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 0 0% 10%;
+  --muted: 220 13% 91%;
+  --muted-foreground: 0 0% 45%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 0 0% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 0 0% 10%;
+  --radius: 0.75rem;
+  
+  /* Pastel colors */
+  --pastel-gray: 0 0% 94%;
+  --pastel-blue: 200 60% 90%;
+  --pastel-pink: 340 60% 90%;
+  --pastel-green: 140 40% 88%;
+  --pastel-peach: 20 60% 88%;
+  --pastel-purple: 270 40% 90%;
+  --pastel-yellow: 50 60% 88%;
+  --pastel-cyan: 180 50% 88%;
+  
+  /* Label colors */
+  --label-purple: 270 70% 60%;
+  --label-red: 0 70% 60%;
+  --label-pink: 340 70% 60%;
+  --label-cyan: 180 70% 60%;
+  --label-green: 140 70% 50%;
+  --label-yellow: 50 80% 60%;
+  --label-blue: 200 80% 60%;
+  --label-orange: 30 80% 60%;
+  
+  --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+[data-theme="dark"] {
+  --background: 0 0% 10%;
+  --foreground: 0 0% 98%;
+  --card: 0 0% 15%;
+  --card-foreground: 0 0% 98%;
+  --popover: 0 0% 15%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 0 0% 10%;
+  --secondary: 0 0% 20%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 20%;
+  --muted-foreground: 0 0% 60%;
+  --accent: 0 0% 20%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
+  --ring: 0 0% 83.9%;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 15%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 83.9%;
+  }
+} */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-*: initial;
+  
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  
+  --color-pastel-gray: hsl(var(--pastel-gray));
+  --color-pastel-blue: hsl(var(--pastel-blue));
+  --color-pastel-pink: hsl(var(--pastel-pink));
+  --color-pastel-green: hsl(var(--pastel-green));
+  --color-pastel-peach: hsl(var(--pastel-peach));
+  --color-pastel-purple: hsl(var(--pastel-purple));
+  --color-pastel-yellow: hsl(var(--pastel-yellow));
+  --color-pastel-cyan: hsl(var(--pastel-cyan));
+  
+  --color-label-purple: hsl(var(--label-purple));
+  --color-label-red: hsl(var(--label-red));
+  --color-label-pink: hsl(var(--label-pink));
+  --color-label-cyan: hsl(var(--label-cyan));
+  --color-label-green: hsl(var(--label-green));
+  --color-label-yellow: hsl(var(--label-yellow));
+  --color-label-blue: hsl(var(--label-blue));
+  --color-label-orange: hsl(var(--label-orange));
+  
+  --radius-default: var(--radius);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+/* Utilities */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
