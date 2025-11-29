@@ -1,8 +1,9 @@
-import { Search, Bell, HelpCircle, Plus } from 'lucide-react';
+import { Search, Bell, Plus, Heart } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import Link from 'next/link';
+import ThemeToggle from './theme-toggle';
 
 export const Header = () => {
   return (
@@ -12,14 +13,14 @@ export const Header = () => {
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl font-bold italic text-foreground">Trello</span>
           </Link>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Link href="/boards" className="flex items-center gap-2 text-sm text-muted-foreground">
             <div className="flex gap-1">
               <div className="h-2 w-2 rounded-sm bg-muted-foreground" />
               <div className="h-2 w-2 rounded-sm bg-muted-foreground" />
               <div className="h-2 w-2 rounded-sm bg-muted-foreground" />
             </div>
             <span className="font-medium">Boards</span>
-          </div>
+          </Link>
         </div>
 
         <div className="flex-1 max-w-xl mx-8">
@@ -33,11 +34,12 @@ export const Header = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <Button variant="ghost" size="icon" className="rounded-full">
             <Plus className="h-5 w-5" />
           </Button>
           <Button variant="ghost" size="icon" className="rounded-full">
-            <HelpCircle className="h-5 w-5" />
+            <Heart className="h-5 w-5" />
           </Button>
           <Button variant="ghost" size="icon" className="rounded-full">
             <Bell className="h-5 w-5" />
