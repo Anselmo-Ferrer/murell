@@ -11,7 +11,7 @@ export const Header = () => {
       <div className="flex h-16 items-center justify-between px-6">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold italic text-foreground">Trello</span>
+            <span className="text-2xl font-bold italic text-foreground">Murell</span>
           </Link>
           <Link href="/boards" className="flex items-center gap-2 text-sm text-muted-foreground">
             <div className="flex gap-1">
