@@ -4,6 +4,7 @@ import { Card } from './column.service';
 export interface CreateCardData {
   title: string;
   description?: string;
+  image?: string;
   position?: number;
 }
 
