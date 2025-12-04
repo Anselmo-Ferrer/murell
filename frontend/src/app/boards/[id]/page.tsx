@@ -184,7 +184,7 @@ const BoardDetailContent = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="border-b bg-card">
+      <div className="border-b bg-background">
         <div className="container max-w-full mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">

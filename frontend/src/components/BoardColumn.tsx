@@ -26,11 +26,11 @@ export const BoardColumn = ({ column, boardId }: BoardColumnProps) => {
       <div
         ref={setNodeRef}
         className={cn(
-          'flex min-w-[320px] h-full flex-col rounded-lg bg-muted/30 p-3 transition-colors',
+          'flex min-w-[320px] h-full flex-col rounded-lg p-3 transition-colors',
           isOver && 'bg-muted/50 ring-2 ring-primary ring-offset-2'
         )}
       >
-        <div className="flex items-center justify-between mb-3 px-1 flex-shrink-0">
+        <div className="flex items-center justify-between mb-3 flex-shrink-0 bg-card border border-border hover:shadow-md transition-all p-2 rounded-lg">
           <h3 className="text-sm font-semibold text-foreground">{column.title}</h3>
           <Button variant="ghost" size="icon" className="h-6 w-6">
             <MoreHorizontal className="h-4 w-4" />
@@ -46,7 +46,7 @@ export const BoardColumn = ({ column, boardId }: BoardColumnProps) => {
         <CreateCardDialog boardId={boardId} columnId={column.id}>
           <Button
             variant="ghost"
-            className="mt-3 w-full justify-start text-sm text-muted-foreground hover:bg-muted/50 flex-shrink-0"
+            className="mt-3 w-full justify-start text-sm text-muted-foreground hover:bg-muted/50 flex-shrink-0 rounded-lg border-2 border-dashed border-muted-foreground/30"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add new card
