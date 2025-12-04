@@ -14,6 +14,7 @@ export interface Card {
   id: string;
   title: string;
   description?: string | null;
+  image?: string | null;
   position: number;
   columnId: string;
   createdAt: string;
