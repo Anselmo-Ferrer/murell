@@ -1,11 +1,39 @@
+'use client';
+
 import { Search, Bell, Plus, Heart } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import Link from 'next/link';
 import ThemeToggle from './theme-toggle';
+import { authService } from '@/services/auth.service';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export const Header = () => {
+  const router = useRouter();
+  const [user, setUser] = useState(authService.getCurrentUser());
+  const [userInitials, setUserInitials] = useState('U');
+
+  useEffect(() => {
+    const currentUser = authService.getCurrentUser();
+    setUser(currentUser);
+    
+    if (currentUser) {
+      const initials = currentUser.name
+        .split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+      setUserInitials(initials || 'U');
+    }
+  }, []);
+
+  const handleAvatarClick = () => {
+    router.push('/settings');
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-card">
       <div className="flex h-16 items-center justify-between px-6">
@@ -44,11 +72,18 @@ export const Header = () => {
           <Button variant="ghost" size="icon" className="rounded-full">
             <Bell className="h-5 w-5" />
           </Button>
-          <Avatar className="h-8 w-8">
-            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" />
-            <AvatarFallback>U</AvatarFallback>
-          </Avatar>
-          <span className="text-sm font-medium">Menu</span>
+          <button
+            onClick={handleAvatarClick}
+            className="cursor-pointer hover:opacity-80 transition-opacity"
+            aria-label="Settings"
+          >
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user?.avatar || undefined} />
+              <AvatarFallback className="text-xs font-medium">
+                {userInitials}
+              </AvatarFallback>
+            </Avatar>
+          </button>
         </div>
       </div>
     </header>

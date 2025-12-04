@@ -15,10 +15,10 @@ const Landing = () => {
           </Link>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/auth">
+          <Link href="/auth/login">
             <Button variant="ghost">Entrar</Button>
           </Link>
-          <Link href="/auth">
+          <Link href="/auth/register">
             <Button>Começar grátis</Button>
           </Link>
         </div>
@@ -38,7 +38,7 @@ const Landing = () => {
             e alcance novos patamares de produtividade.
           </p>
           <div className="flex items-center justify-center gap-4 pt-4">
-            <Link href="/auth">
+            <Link href="/auth/register">
               <Button size="lg" className="gap-2">
                 Começar agora <ArrowRight className="w-4 h-4" />
               </Button>
@@ -139,7 +139,7 @@ const Landing = () => {
           <p className="text-xl text-muted-foreground">
             Junte-se a milhares de equipes que já transformaram sua produtividade
           </p>
-          <Link href="/auth">
+          <Link href="/auth/register">
             <Button size="lg" className="gap-2">
               Criar conta grátis <ArrowRight className="w-4 h-4" />
             </Button>
