@@ -35,7 +35,7 @@ export const authService = {
       }
       return response.data;
     }
-    throw new Error('Login failed');
+    throw new Error(response.error || response.message || 'Falha ao fazer login. Verifique suas credenciais.');
   },
 
   async register(data: RegisterData): Promise<AuthResponse> {
@@ -48,7 +48,7 @@ export const authService = {
       }
       return response.data;
     }
-    throw new Error('Registration failed');
+    throw new Error(response.error || response.message || 'Falha ao criar conta. Tente novamente.');
   },
 
   logout(): void {

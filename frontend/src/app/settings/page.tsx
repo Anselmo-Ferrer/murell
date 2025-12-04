@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from "react";
-import { ArrowLeft, User, Bell, Palette, Shield } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, User, Bell, Palette, Shield, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,17 +12,34 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { authService } from "@/services/auth.service";
+import { Header } from "@/components/header";
 
 const Settings = () => {
   const router = useRouter();
   const { toast } = useToast();
   
   const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    bio: "Product designer and project manager",
+    name: "",
+    email: "",
+    bio: "",
     avatar: "",
   });
+
+  useEffect(() => {
+    const currentUser = authService.getCurrentUser();
+    if (!currentUser) {
+      router.push('/auth/login');
+      return;
+    }
+    
+    setProfile({
+      name: currentUser.name || "",
+      email: currentUser.email || "",
+      bio: currentUser.bio || "",
+      avatar: currentUser.avatar || "",
+    });
+  }, [router]);
 
   const [notifications, setNotifications] = useState({
     emailNotifications: true,
@@ -37,28 +54,48 @@ const Settings = () => {
 
   const handleSave = () => {
     toast({
-      title: "Settings saved",
-      description: "Your changes have been saved successfully.",
+      title: "Configurações salvas",
+      description: "Suas alterações foram salvas com sucesso.",
     });
+  };
+
+  const handleLogout = () => {
+    authService.logout();
+    toast({
+      title: "Logout realizado",
+      description: "Você foi desconectado com sucesso.",
+    });
+    router.push('/auth/login');
+  };
+
+  const getUserInitials = () => {
+    if (!profile.name) return 'U';
+    return profile.name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+      <Header />
+      <div className="border-b bg-card/50 backdrop-blur-sm sticky top-16 z-10">
         <div className="container max-w-5xl mx-auto px-6 py-4">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => router.back()}
+              onClick={() => router.push('/boards')}
               className="h-8 w-8"
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+              <h1 className="text-2xl font-bold text-foreground">Configurações</h1>
               <p className="text-sm text-muted-foreground">
-                Manage your account settings and preferences
+                Gerencie as configurações da sua conta e preferências
               </p>
             </div>
           </div>
@@ -70,28 +107,28 @@ const Settings = () => {
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="profile" className="gap-2">
               <User className="h-4 w-4" />
-              Profile
+              Perfil
             </TabsTrigger>
             <TabsTrigger value="notifications" className="gap-2">
               <Bell className="h-4 w-4" />
-              Notifications
+              Notificações
             </TabsTrigger>
             <TabsTrigger value="appearance" className="gap-2">
               <Palette className="h-4 w-4" />
-              Appearance
+              Aparência
             </TabsTrigger>
             <TabsTrigger value="security" className="gap-2">
               <Shield className="h-4 w-4" />
-              Security
+              Segurança
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile" className="space-y-6">
             <div className="rounded-lg border bg-card p-6 space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-1">Profile Information</h3>
+                <h3 className="text-lg font-semibold mb-1">Informações do Perfil</h3>
                 <p className="text-sm text-muted-foreground">
-                  Update your profile details and personal information
+                  Atualize os detalhes do seu perfil e informações pessoais
                 </p>
               </div>
 
@@ -99,24 +136,24 @@ const Settings = () => {
 
               <div className="flex items-center gap-6">
                 <Avatar className="h-20 w-20">
-                  <AvatarImage src={profile.avatar} />
-                  <AvatarFallback className="text-2xl">
-                    {profile.name.split(" ").map(n => n[0]).join("")}
+                  <AvatarImage src={profile.avatar || undefined} />
+                  <AvatarFallback className="text-2xl font-medium">
+                    {getUserInitials()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="space-y-2">
                   <Button variant="outline" size="sm">
-                    Change Avatar
+                    Alterar Avatar
                   </Button>
                   <p className="text-xs text-muted-foreground">
-                    JPG, PNG or GIF. Max size 2MB.
+                    JPG, PNG ou GIF. Tamanho máximo 2MB.
                   </p>
                 </div>
               </div>
 
               <div className="grid gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
+                  <Label htmlFor="name">Nome completo</Label>
                   <Input
                     id="name"
                     value={profile.name}
@@ -134,7 +171,7 @@ const Settings = () => {
                     className="bg-muted/50"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Email cannot be changed
+                    O email não pode ser alterado
                   </p>
                 </div>
 
@@ -145,20 +182,21 @@ const Settings = () => {
                     value={profile.bio}
                     onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
                     rows={3}
+                    placeholder="Conte um pouco sobre você..."
                   />
                 </div>
               </div>
 
-              <Button onClick={handleSave}>Save Changes</Button>
+              <Button onClick={handleSave}>Salvar alterações</Button>
             </div>
           </TabsContent>
 
           <TabsContent value="notifications" className="space-y-6">
             <div className="rounded-lg border bg-card p-6 space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-1">Notification Preferences</h3>
+                <h3 className="text-lg font-semibold mb-1">Preferências de Notificação</h3>
                 <p className="text-sm text-muted-foreground">
-                  Choose how you want to be notified about updates
+                  Escolha como deseja ser notificado sobre atualizações
                 </p>
               </div>
 
@@ -167,9 +205,9 @@ const Settings = () => {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="email-notifications">Email Notifications</Label>
+                    <Label htmlFor="email-notifications">Notificações por Email</Label>
                     <p className="text-sm text-muted-foreground">
-                      Receive email updates about your activity
+                      Receba atualizações por email sobre sua atividade
                     </p>
                   </div>
                   <Switch
@@ -183,9 +221,9 @@ const Settings = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="push-notifications">Push Notifications</Label>
+                    <Label htmlFor="push-notifications">Notificações Push</Label>
                     <p className="text-sm text-muted-foreground">
-                      Get push notifications in your browser
+                      Receba notificações push no seu navegador
                     </p>
                   </div>
                   <Switch
@@ -199,9 +237,9 @@ const Settings = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="weekly-digest">Weekly Digest</Label>
+                    <Label htmlFor="weekly-digest">Resumo Semanal</Label>
                     <p className="text-sm text-muted-foreground">
-                      Receive a weekly summary of your projects
+                      Receba um resumo semanal dos seus projetos
                     </p>
                   </div>
                   <Switch
@@ -214,16 +252,16 @@ const Settings = () => {
                 </div>
               </div>
 
-              <Button onClick={handleSave}>Save Preferences</Button>
+              <Button onClick={handleSave}>Salvar preferências</Button>
             </div>
           </TabsContent>
 
           <TabsContent value="appearance" className="space-y-6">
             <div className="rounded-lg border bg-card p-6 space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-1">Appearance Settings</h3>
+                <h3 className="text-lg font-semibold mb-1">Configurações de Aparência</h3>
                 <p className="text-sm text-muted-foreground">
-                  Customize how the app looks and feels
+                  Personalize a aparência e o comportamento do aplicativo
                 </p>
               </div>
 
@@ -232,9 +270,9 @@ const Settings = () => {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="dark-mode">Dark Mode</Label>
+                    <Label htmlFor="dark-mode">Modo Escuro</Label>
                     <p className="text-sm text-muted-foreground">
-                      Use dark theme across the application
+                      Use o tema escuro em todo o aplicativo
                     </p>
                   </div>
                   <Switch
@@ -248,9 +286,9 @@ const Settings = () => {
 
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="compact-view">Compact View</Label>
+                    <Label htmlFor="compact-view">Visual Compacto</Label>
                     <p className="text-sm text-muted-foreground">
-                      Show more content in less space
+                      Mostre mais conteúdo em menos espaço
                     </p>
                   </div>
                   <Switch
@@ -263,16 +301,16 @@ const Settings = () => {
                 </div>
               </div>
 
-              <Button onClick={handleSave}>Save Preferences</Button>
+              <Button onClick={handleSave}>Salvar preferências</Button>
             </div>
           </TabsContent>
 
           <TabsContent value="security" className="space-y-6">
             <div className="rounded-lg border bg-card p-6 space-y-6">
               <div>
-                <h3 className="text-lg font-semibold mb-1">Security Settings</h3>
+                <h3 className="text-lg font-semibold mb-1">Configurações de Segurança</h3>
                 <p className="text-sm text-muted-foreground">
-                  Manage your password and security options
+                  Gerencie sua senha e opções de segurança
                 </p>
               </div>
 
@@ -280,32 +318,39 @@ const Settings = () => {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="current-password">Current Password</Label>
+                  <Label htmlFor="current-password">Senha Atual</Label>
                   <Input id="current-password" type="password" />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="new-password">New Password</Label>
+                  <Label htmlFor="new-password">Nova Senha</Label>
                   <Input id="new-password" type="password" />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm New Password</Label>
+                  <Label htmlFor="confirm-password">Confirmar Nova Senha</Label>
                   <Input id="confirm-password" type="password" />
                 </div>
               </div>
 
-              <Button onClick={handleSave}>Update Password</Button>
+              <Button onClick={handleSave}>Atualizar Senha</Button>
 
               <Separator />
 
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium mb-1">Delete Account</h4>
+                  <h4 className="font-medium mb-1">Sair da Conta</h4>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Permanently delete your account and all associated data
+                    Faça logout da sua conta atual
                   </p>
-                  <Button variant="destructive">Delete Account</Button>
+                  <Button 
+                    variant="destructive" 
+                    onClick={handleLogout}
+                    className="gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sair
+                  </Button>
                 </div>
               </div>
             </div>
