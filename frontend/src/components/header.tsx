@@ -1,23 +1,27 @@
 'use client';
 
-import { Search, Bell, Plus, Heart } from 'lucide-react';
+import { Search, Bell, Plus, Heart, CornerUpLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import Link from 'next/link';
 import ThemeToggle from './theme-toggle';
 import { authService } from '@/services/auth.service';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export const Header = () => {
   const router = useRouter();
+  const pathname = usePathname()
   const [user, setUser] = useState(authService.getCurrentUser());
   const [userInitials, setUserInitials] = useState('U');
-
+  const [inBoard, setInBoard] = useState(false)
+ 
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
     setUser(currentUser);
+
+    setInBoard(pathname.startsWith('/boards/'));
     
     if (currentUser) {
       const initials = currentUser.name
@@ -28,7 +32,7 @@ export const Header = () => {
         .slice(0, 2);
       setUserInitials(initials || 'U');
     }
-  }, []);
+  }, [pathname]);
 
   const handleAvatarClick = () => {
     router.push('/settings');
@@ -52,18 +56,30 @@ export const Header = () => {
         </div>
 
         <div className="flex-1 max-w-xl mx-8">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search..."
-              className="pl-10 bg-background border-border"
-            />
-          </div>
+          {inBoard ? (
+            <Link href="/boards">
+              <Button 
+                variant="outline" 
+                className="w-full h-10 justify-start gap-2"
+              >
+                <CornerUpLeft />
+                <span>Back to Boards</span>
+              </Button>
+            </Link>
+          ) : (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search..."
+                className="pl-10 bg-background border-border"
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <Button variant="ghost" size="icon" className="rounded-full">
+          {/* <Button variant="ghost" size="icon" className="rounded-full">
             <Plus className="h-5 w-5" />
           </Button>
           <Button variant="ghost" size="icon" className="rounded-full">
@@ -71,7 +87,7 @@ export const Header = () => {
           </Button>
           <Button variant="ghost" size="icon" className="rounded-full">
             <Bell className="h-5 w-5" />
-          </Button>
+          </Button> */}
           <button
             onClick={handleAvatarClick}
             className="cursor-pointer hover:opacity-80 transition-opacity"

@@ -185,11 +185,11 @@ const BoardDetailContent = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="border-b bg-card">
-        <div className="container max-w-7xl mx-auto px-6 py-4">
+        <div className="container max-w-full mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <h1 className="text-xl font-bold">{board.title}</h1>
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                   <Heart className="h-4 w-4" />
                 </Button>
@@ -199,7 +199,7 @@ const BoardDetailContent = () => {
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                   <Lock className="h-4 w-4" />
                 </Button>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex items-center gap-3">
