@@ -1,9 +1,13 @@
+'use client';
+
 import { MessageSquare, Heart, Paperclip, MoreHorizontal } from 'lucide-react';
 import { Card } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { Card as CardType } from '@/data/mockData';
 import { cn } from '@/lib/utils';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface TaskCardProps {
   card: CardType;
@@ -21,9 +25,25 @@ const labelColorMap: Record<string, string> = {
 };
 
 export const TaskCard = ({ card }: TaskCardProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: card.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition: isDragging ? undefined : transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   return (
-    <Card className="group bg-card border-border hover:shadow-md transition-all cursor-pointer">
-      <div className="p-4 space-y-3">
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <Card className="group bg-card border-border hover:shadow-md transition-all cursor-move">
+        <div className="p-4 space-y-3">
         {card.labels.length > 0 && (
           <div className="flex gap-1">
             {card.labels.map((label, idx) => (
@@ -88,6 +108,7 @@ export const TaskCard = ({ card }: TaskCardProps) => {
           </div>
         </div>
       </div>
-    </Card>
+      </Card>
+    </div>
   );
 };

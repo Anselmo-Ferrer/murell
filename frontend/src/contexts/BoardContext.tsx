@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 import { Board, Column, Card, boardColumns as initialBoardColumns, TeamMember } from '@/data/mockData';
 import { Board as BackendBoard, boardService } from '@/services/board.service';
 import { Column as BackendColumn, Card as BackendCard, columnService } from '@/services/column.service';
+import { cardService } from '@/services/card.service';
 import { authService } from '@/services/auth.service';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -19,6 +20,7 @@ interface BoardContextType {
   addCard: (boardId: string, columnId: string, card: Card) => void;
   updateColumn: (boardId: string, column: Column) => void;
   updateCard: (boardId: string, columnId: string, card: Card) => void;
+  moveCard: (boardId: string, cardId: string, sourceColumnId: string, targetColumnId: string, newPosition: number) => Promise<void>;
 }
 
 const BoardContext = createContext<BoardContextType | undefined>(undefined);
@@ -197,6 +199,69 @@ export const BoardProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
+  const moveCard = async (
+    boardId: string,
+    cardId: string,
+    sourceColumnId: string,
+    targetColumnId: string,
+    newPosition: number
+  ) => {
+    try {
+      // Update UI optimistically
+      setBoardColumns((prev) => {
+        const columns = prev[boardId] || [];
+        const sourceColumn = columns.find((col) => col.id === sourceColumnId);
+        const targetColumn = columns.find((col) => col.id === targetColumnId);
+        
+        if (!sourceColumn || !targetColumn) return prev;
+
+        const card = sourceColumn.cards.find((c) => c.id === cardId);
+        if (!card) return prev;
+
+        // Remove card from source column
+        const updatedSourceColumn = {
+          ...sourceColumn,
+          cards: sourceColumn.cards.filter((c) => c.id !== cardId),
+        };
+
+        // Add card to target column at new position
+        const updatedTargetCards = [...targetColumn.cards];
+        updatedTargetCards.splice(newPosition, 0, card);
+        const updatedTargetColumn = {
+          ...targetColumn,
+          cards: updatedTargetCards,
+        };
+
+        return {
+          ...prev,
+          [boardId]: columns.map((col) => {
+            if (col.id === sourceColumnId) return updatedSourceColumn;
+            if (col.id === targetColumnId) return updatedTargetColumn;
+            return col;
+          }),
+        };
+      });
+
+      // Call backend to save the move
+      await cardService.moveCard(cardId, {
+        columnId: targetColumnId,
+        position: newPosition,
+      });
+
+      // Reload columns to get fresh data
+      await loadBoardColumns(boardId);
+    } catch (error) {
+      console.error('Failed to move card:', error);
+      toast({
+        title: 'Erro ao mover card',
+        description: error instanceof Error ? error.message : 'Tente novamente mais tarde.',
+        variant: 'destructive',
+      });
+      // Reload to revert UI changes
+      await loadBoardColumns(boardId);
+    }
+  };
+
   return (
     <BoardContext.Provider value={{ 
       boards, 
@@ -209,6 +274,7 @@ export const BoardProvider = ({ children }: { children: ReactNode }) => {
       addCard,
       updateColumn,
       updateCard,
+      moveCard,
     }}>
       {children}
     </BoardContext.Provider>
