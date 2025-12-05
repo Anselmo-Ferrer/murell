@@ -4,7 +4,7 @@ import { ColumnWithCards } from '../types';
 
 export class ColumnRepository {
   async findById(id: string): Promise<ColumnWithCards | null> {
-    return prisma.column.findUnique({
+    const column = await prisma.column.findUnique({
       where: { id },
       include: {
         cards: {
@@ -33,10 +33,21 @@ export class ColumnRepository {
         },
       },
     });
+
+    if (!column) return null;
+
+    return {
+      ...column,
+      cards: column.cards.map((card) => ({
+        ...card,
+        labels: card.labels.map((cl) => cl.label),
+        members: card.members.map((cm) => cm.user),
+      })),
+    };
   }
 
   async findByBoardId(boardId: string): Promise<ColumnWithCards[]> {
-    return prisma.column.findMany({
+    const columns = await prisma.column.findMany({
       where: { boardId },
       include: {
         cards: {
@@ -68,6 +79,15 @@ export class ColumnRepository {
         position: 'asc',
       },
     });
+
+    return columns.map((column) => ({
+      ...column,
+      cards: column.cards.map((card) => ({
+        ...card,
+        labels: card.labels.map((cl) => cl.label),
+        members: card.members.map((cm) => cm.user),
+      })),
+    }));
   }
 
   async create(data: { title: string; boardId: string; position?: number }): Promise<Column> {
