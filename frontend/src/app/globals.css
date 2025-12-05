@@ -4,9 +4,10 @@
 
 :root {
   /* Base colors */
-  --background: 0 0% 98%;
+  /* --background: 0 0% 98%; */
+  --background: 0 0% 100%;
   --foreground: 0 0% 10%;
-  --card: 0 0% 100%;
+  --card: 0 0% 96%;
   --card-foreground: 0 0% 10%;
   --popover: 0 0% 100%;
   --popover-foreground: 0 0% 10%;

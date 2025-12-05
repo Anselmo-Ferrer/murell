@@ -59,11 +59,11 @@ export const TaskCard = ({ card }: TaskCardProps) => {
         )}
 
         {card.image && (
-          <div className="relative -mx-4 -mt-4 mb-3 overflow-hidden rounded-t-lg">
+          <div className="relative -mx-4 -mt-4 mb-3 overflow-hidden rounded-t-lg p-3">
             <img
               src={card.image}
               alt={card.title}
-              className="w-full h-40 object-cover"
+              className="w-full h-40 object-cover rounded-lg"
             />
           </div>
         )}
@@ -88,7 +88,7 @@ export const TaskCard = ({ card }: TaskCardProps) => {
             ))}
           </div>
 
-          <div className="flex items-center gap-3 text-muted-foreground">
+          {/* <div className="flex items-center gap-3 text-muted-foreground">
             <div className="flex items-center gap-1 text-xs">
               <MessageSquare className="h-3.5 w-3.5" />
               <span>{card.comments}</span>
@@ -105,7 +105,7 @@ export const TaskCard = ({ card }: TaskCardProps) => {
                 <span>{card.attachments}</span>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
       </Card>

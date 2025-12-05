@@ -48,7 +48,8 @@ export const transformBackendBoard = (backendBoard: BackendBoard): Board => {
     description: backendBoard.description || '',
     members,
     color: (backendBoard.color || 'gray') as Board['color'],
-    category: (backendBoard.category || 'new') as Board['category'],
+    createdAt: backendBoard.createdAt,
+    updatedAt: backendBoard.updatedAt,
   };
 };
 

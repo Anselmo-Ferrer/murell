@@ -40,16 +40,26 @@ export default function ThemeToggle() {
   }
 
   if (!mounted) {
-    return (
-       <div className="h-[30px] w-[50px]" />
-    )
+    return <div className="h-[30px] w-[30px]" />
   }
 
   return (
-    <button 
+    <button
       onClick={toggleTheme}
-      className="flex items-center cursor-pointer hover:bg-[#9595954D] h-[30px] w-fit md:w-[50px] text-[#0A0A0A] dark:text-white rounded-3xl justify-center px-2 md:px-3 transition duration-150 ease-in-out">
-      {theme === 'light' ? <Sun size={18} /> : <Moon size={14}/> }
+      className="
+        flex items-center justify-center
+        cursor-pointer
+        hover:bg-[#9595954D]
+        h-[30px] w-[30px]
+        rounded-full
+        transition duration-150 ease-in-out
+        text-[#0A0A0A] dark:text-white
+      "
+    >
+      {theme === 'light' 
+        ? <Sun size={18} className="text-[#0A0A0A] dark:text-[#fff]" /> 
+        : <Moon size={18} className="text-[#0A0A0A] dark:text-[#fff]" />
+      }
     </button>
   )
 }

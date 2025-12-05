@@ -10,7 +10,8 @@ export interface Board {
   description: string;
   members: TeamMember[];
   color: string;
-  category: 'recently-viewed' | 'new' | 'process' | 'completed';
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Card {
@@ -42,6 +43,13 @@ export const teamMembers: TeamMember[] = [
   { id: '8', name: 'Henry Moore', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Henry' },
 ];
 
+// Helper para gerar datas aleatórias
+const getRandomDate = (daysAgo: number) => {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  return date.toISOString();
+};
+
 export const boards: Board[] = [
   {
     id: '1',
@@ -49,7 +57,8 @@ export const boards: Board[] = [
     description: 'Saving money – is something we would all like.',
     members: [teamMembers[0], teamMembers[1]],
     color: 'gray',
-    category: 'recently-viewed',
+    createdAt: getRandomDate(10),
+    updatedAt: getRandomDate(1), // Atualizado há 1 dia
   },
   {
     id: '2',
@@ -57,7 +66,8 @@ export const boards: Board[] = [
     description: 'In the last five to six years the FTA satellite receiver has become an everyday household electronic device.',
     members: [teamMembers[2], teamMembers[3], teamMembers[4]],
     color: 'blue',
-    category: 'recently-viewed',
+    createdAt: getRandomDate(2), // Criado há 2 dias
+    updatedAt: getRandomDate(2),
   },
   {
     id: '3',
@@ -65,7 +75,8 @@ export const boards: Board[] = [
     description: 'Color is so powerful that it can persuade, motivate.',
     members: [teamMembers[5]],
     color: 'pink',
-    category: 'recently-viewed',
+    createdAt: getRandomDate(15),
+    updatedAt: getRandomDate(5),
   },
   {
     id: '4',
@@ -73,7 +84,8 @@ export const boards: Board[] = [
     description: 'When I was just starting 6th grade I got my first job. Paperboy. Boy, was I excited.',
     members: [teamMembers[0], teamMembers[6], teamMembers[7]],
     color: 'peach',
-    category: 'recently-viewed',
+    createdAt: getRandomDate(20),
+    updatedAt: getRandomDate(2), // Atualizado há 2 dias
   },
   {
     id: '5',
@@ -81,7 +93,8 @@ export const boards: Board[] = [
     description: 'Conversations can be a tricky business.',
     members: [teamMembers[1], teamMembers[2]],
     color: 'purple',
-    category: 'recently-viewed',
+    createdAt: getRandomDate(1), // Criado há 1 dia
+    updatedAt: getRandomDate(1),
   },
   {
     id: '6',
@@ -89,7 +102,8 @@ export const boards: Board[] = [
     description: 'The beauty of astronomy is that anybody can do it. From the tiniest baby to the most.',
     members: [teamMembers[3], teamMembers[4], teamMembers[5]],
     color: 'blue',
-    category: 'new',
+    createdAt: getRandomDate(30),
+    updatedAt: getRandomDate(10),
   },
   {
     id: '7',
@@ -97,7 +111,8 @@ export const boards: Board[] = [
     description: 'It is a good idea to think of your PC as an office.',
     members: [teamMembers[6], teamMembers[7]],
     color: 'green',
-    category: 'new',
+    createdAt: getRandomDate(25),
+    updatedAt: getRandomDate(1), // Atualizado há 1 dia
   },
   {
     id: '8',
@@ -105,7 +120,8 @@ export const boards: Board[] = [
     description: 'If you are a serious astronomy fanatic like.',
     members: [teamMembers[0], teamMembers[1]],
     color: 'cyan',
-    category: 'new',
+    createdAt: getRandomDate(3), // Criado há 3 dias (não aparece em "new")
+    updatedAt: getRandomDate(3),
   },
   {
     id: '9',
@@ -113,7 +129,8 @@ export const boards: Board[] = [
     description: 'If you are in the market for kitchenware.',
     members: [teamMembers[2], teamMembers[3], teamMembers[4]],
     color: 'purple',
-    category: 'process',
+    createdAt: getRandomDate(40),
+    updatedAt: getRandomDate(15),
   },
   {
     id: '10',
@@ -121,7 +138,8 @@ export const boards: Board[] = [
     description: 'Gas prices are soaring!',
     members: [teamMembers[5], teamMembers[6]],
     color: 'yellow',
-    category: 'process',
+    createdAt: getRandomDate(2), // Criado há 2 dias
+    updatedAt: getRandomDate(2),
   },
   {
     id: '11',
@@ -129,7 +147,8 @@ export const boards: Board[] = [
     description: 'Kook-2 Dmers are red links for your site. Kook-2.com. Add url free today.',
     members: [teamMembers[7], teamMembers[0], teamMembers[1]],
     color: 'cyan',
-    category: 'process',
+    createdAt: getRandomDate(50),
+    updatedAt: getRandomDate(20),
   },
   {
     id: '12',
@@ -137,7 +156,8 @@ export const boards: Board[] = [
     description: 'Now, if you are interested in being the best player.',
     members: [teamMembers[2], teamMembers[3], teamMembers[4]],
     color: 'peach',
-    category: 'process',
+    createdAt: getRandomDate(1), // Criado há 1 dia
+    updatedAt: getRandomDate(1),
   },
   {
     id: '13',
@@ -145,7 +165,8 @@ export const boards: Board[] = [
     description: 'If you are in the market for kitchenware.',
     members: [teamMembers[5], teamMembers[6], teamMembers[7]],
     color: 'gray',
-    category: 'completed',
+    createdAt: getRandomDate(35),
+    updatedAt: getRandomDate(8),
   },
   {
     id: '14',
@@ -153,7 +174,8 @@ export const boards: Board[] = [
     description: 'If you are in the market for a computer.',
     members: [teamMembers[0], teamMembers[1]],
     color: 'purple',
-    category: 'completed',
+    createdAt: getRandomDate(45),
+    updatedAt: getRandomDate(12),
   },
   {
     id: '15',
@@ -161,7 +183,8 @@ export const boards: Board[] = [
     description: 'If you are in the market for a computer, there are a number of factors to consider.',
     members: [teamMembers[2], teamMembers[3], teamMembers[4]],
     color: 'cyan',
-    category: 'completed',
+    createdAt: getRandomDate(60),
+    updatedAt: getRandomDate(25),
   },
   {
     id: '16',
@@ -169,7 +192,8 @@ export const boards: Board[] = [
     description: 'Here, I focus on a range of items and features that we use in life without giving them a second thought such as Coca Cola.',
     members: [teamMembers[5], teamMembers[6], teamMembers[7]],
     color: 'pink',
-    category: 'completed',
+    createdAt: getRandomDate(55),
+    updatedAt: getRandomDate(30),
   },
   {
     id: '17',
@@ -177,7 +201,8 @@ export const boards: Board[] = [
     description: 'The purpose of your brochure may differ.',
     members: [teamMembers[0], teamMembers[1], teamMembers[2]],
     color: 'green',
-    category: 'completed',
+    createdAt: getRandomDate(70),
+    updatedAt: getRandomDate(40),
   },
 ];
 
