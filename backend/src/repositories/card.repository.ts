@@ -4,7 +4,7 @@ import { CardWithRelations } from '../types';
 
 export class CardRepository {
   async findById(id: string): Promise<CardWithRelations | null> {
-    return prisma.card.findUnique({
+    const card = await prisma.card.findUnique({
       where: { id },
       include: {
         labels: {
@@ -25,11 +25,7 @@ export class CardRepository {
             createdAt: 'desc',
           },
         },
-        likes: {
-          include: {
-            user: true,
-          },
-        },
+        likes: true,
         attachments: true,
         _count: {
           select: {
@@ -40,10 +36,27 @@ export class CardRepository {
         },
       },
     });
+
+    if (!card) return null;
+
+    return {
+      ...card,
+      labels: card.labels.map((cl) => cl.label),
+      members: card.members.map((cm) => cm.user),
+      comments: card.comments.map((comment) => ({
+        ...comment,
+        user: comment.user,
+      })),
+      likes: card.likes.map((like) => ({
+        id: like.id,
+        cardId: like.cardId,
+        userId: like.userId,
+      })),
+    };
   }
 
   async findByColumnId(columnId: string): Promise<CardWithRelations[]> {
-    return prisma.card.findMany({
+    const cards = await prisma.card.findMany({
       where: { columnId },
       include: {
         labels: {
@@ -68,6 +81,12 @@ export class CardRepository {
         position: 'asc',
       },
     });
+
+    return cards.map((card) => ({
+      ...card,
+      labels: card.labels.map((cl) => cl.label),
+      members: card.members.map((cm) => cm.user),
+    }));
   }
 
   async create(data: {
