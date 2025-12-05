@@ -5,7 +5,6 @@ export interface Board {
   title: string;
   description?: string | null;
   color?: string | null;
-  category?: string | null;
   isPublic: boolean;
   creatorId: string;
   createdAt: string;
@@ -33,7 +32,6 @@ export interface CreateBoardData {
   title: string;
   description?: string;
   color?: string;
-  category?: string;
   isPublic?: boolean;
 }
 
@@ -41,7 +39,6 @@ export interface UpdateBoardData {
   title?: string;
   description?: string;
   color?: string;
-  category?: string;
 }
 
 export const boardService = {

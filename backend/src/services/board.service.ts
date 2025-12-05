@@ -29,7 +29,6 @@ export class BoardService {
       title: string;
       description?: string;
       color?: string;
-      category?: string;
       isPublic?: boolean;
     }
   ) {
@@ -39,7 +38,7 @@ export class BoardService {
     });
   }
 
-  async updateBoard(boardId: string, userId: string, data: Partial<{ title: string; description: string; color: string; category: string }>) {
+  async updateBoard(boardId: string, userId: string, data: Partial<{ title: string; description: string; color: string}>) {
     const board = await boardRepository.findById(boardId);
     if (!board) {
       throw new NotFoundError('Board');

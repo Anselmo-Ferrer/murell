@@ -27,11 +27,11 @@ export const BoardCard = ({ board }: BoardCardProps) => {
     <Link href={`/boards/${board.id}`}>
       <Card
         className={cn(
-          'group relative overflow-hidden border-none transition-all hover:shadow-md hover:-translate-y-0.5',
+          'h-full group relative overflow-hidden border-none transition-all hover:shadow-md hover:-translate-y-0.5',
           colorMap[board.color] || 'bg-pastel-gray'
         )}
       >
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-4 flex flex-col h-full justify-between">
           <h3 className="text-lg font-semibold text-foreground leading-tight">
             {board.title}
           </h3>

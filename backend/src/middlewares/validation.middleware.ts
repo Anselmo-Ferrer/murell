@@ -44,7 +44,6 @@ export const schemas = {
         title: z.string().min(1, 'Title is required'),
         description: z.string().optional(),
         color: z.string().optional(),
-        category: z.string().optional(),
         isPublic: z.boolean().optional(),
       }),
     }),
@@ -53,7 +52,6 @@ export const schemas = {
         title: z.string().min(1).optional(),
         description: z.string().optional(),
         color: z.string().optional(),
-        category: z.string().optional(),
       }),
       params: z.object({
         id: z.string().min(1),

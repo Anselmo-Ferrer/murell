@@ -72,7 +72,6 @@ export class BoardRepository {
     title: string;
     description?: string;
     color?: string;
-    category?: string;
     creatorId: string;
     isPublic?: boolean;
   }): Promise<Board> {
@@ -89,7 +88,7 @@ export class BoardRepository {
     });
   }
 
-  async update(id: string, data: Partial<{ title: string; description: string; color: string; category: string }>): Promise<Board> {
+  async update(id: string, data: Partial<{ title: string; description: string; color: string}>): Promise<Board> {
     return prisma.board.update({
       where: { id },
       data,

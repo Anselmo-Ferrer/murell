@@ -32,7 +32,6 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [color, setColor] = useState('blue');
-  const [category, setCategory] = useState<Board['category']>('new');
   const [isLoading, setIsLoading] = useState(false);
   const { addBoard, refreshBoards } = useBoardContext();
   const { toast } = useToast();
@@ -49,7 +48,6 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
         title: title.trim(),
         description: description.trim() || undefined,
         color: color || undefined,
-        category: category || undefined,
       });
 
       // Transform backend board to frontend format
@@ -67,7 +65,6 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
       setTitle('');
       setDescription('');
       setColor('blue');
-      setCategory('new');
       setOpen(false);
     } catch (error) {
       toast({
@@ -132,24 +129,6 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
                 />
               ))}
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="category">Categoria</Label>
-            <Select 
-              value={category} 
-              onValueChange={(value) => setCategory(value as Board['category'])}
-              disabled={isLoading}
-            >
-              <SelectTrigger id="category">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="new">Novo</SelectItem>
-                <SelectItem value="process">Em Processo</SelectItem>
-                <SelectItem value="completed">Completado</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           <div className="flex justify-end gap-3 pt-4">

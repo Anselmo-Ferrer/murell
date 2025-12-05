@@ -29,7 +29,6 @@ async function main() {
       title: 'My First Board',
       description: 'This is a sample board',
       color: 'blue',
-      category: 'new',
       creatorId: user.id,
       isPublic: false,
       members: {
