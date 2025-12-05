@@ -87,7 +87,7 @@ const Settings = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => router.push('/boards')}
+              onClick={() => router.back()}
               className="h-8 w-8"
             >
               <ArrowLeft className="h-4 w-4" />
