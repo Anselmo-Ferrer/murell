@@ -1,6 +1,6 @@
 import { prisma } from '../config/database';
-import { Board, BoardMember, Column } from '@prisma/client';
-import { BoardWithRelations, ColumnWithCards } from '../types';
+import { Board, BoardMember} from '@prisma/client';
+import { BoardWithRelations } from '../types';
 
 export class BoardRepository {
   async findById(id: string): Promise<BoardWithRelations | null> {
