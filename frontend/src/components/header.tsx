@@ -8,20 +8,32 @@ import Link from 'next/link';
 import ThemeToggle from './theme-toggle';
 import { authService } from '@/services/auth.service';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { BoardContext } from '@/contexts/BoardContext';
 
 export const Header = () => {
   const router = useRouter();
   const pathname = usePathname()
-  const [user, setUser] = useState(authService.getCurrentUser());
+  const [user, setUser] = useState<any>(null);
   const [userInitials, setUserInitials] = useState('U');
   const [inBoard, setInBoard] = useState(false)
- 
+  const [showSearch, setShowSearch] = useState(false);
+  
+  // Safe way to try using context
+  const boardContext = useContext(BoardContext);
+
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
     setUser(currentUser);
 
-    setInBoard(pathname.startsWith('/boards/'));
+    const isBoardsPage = pathname === '/boards';
+    setInBoard(pathname.startsWith('/boards/') && pathname !== '/boards');
+    setShowSearch(isBoardsPage);
+    
+    // Clear search when leaving boards page
+    if (!isBoardsPage && boardContext?.setSearchQuery) {
+      boardContext.setSearchQuery('');
+    }
     
     if (currentUser) {
       const initials = currentUser.name
@@ -32,7 +44,7 @@ export const Header = () => {
         .slice(0, 2);
       setUserInitials(initials || 'U');
     }
-  }, [pathname]);
+  }, [pathname, boardContext]);
 
   const handleAvatarClick = () => {
     router.push('/settings');
@@ -42,7 +54,7 @@ export const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="flex h-16 items-center justify-between px-6">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href={user ? "/boards" : "/"} className="flex items-center gap-2">
             <span className="text-2xl font-bold italic text-foreground">Murell</span>
           </Link>
           <Link href="/boards" className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -67,11 +79,14 @@ export const Header = () => {
               </Button>
             </Link>
           ) : (
-            <div className="relative">
+            <div className={`relative ${showSearch ? 'opacity-100' : 'opacity-0 pointer-events-none'} transition-opacity duration-200`}>
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search..."
+                placeholder="Search boards..."
                 className="pl-10 bg-background border-border"
+                value={boardContext?.searchQuery || ''}
+                onChange={(e) => boardContext?.setSearchQuery(e.target.value)}
+                disabled={!showSearch}
               />
             </div>
           )}
