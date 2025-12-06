@@ -58,6 +58,32 @@ export const authService = {
     }
   },
 
+  async updatePassword(currentPassword: string, newPassword: string): Promise<void> {
+    const response = await api.put('/users/password', { currentPassword, newPassword });
+    if (!response.success) {
+      throw new Error(response.error || response.message || 'Falha ao atualizar senha.');
+    }
+  },
+
+  async updateProfile(data: Partial<User>): Promise<User> {
+    const response = await api.put<AuthResponse>('/users/profile', data);
+
+    if (response.success && response.data) {
+      // The backend response structure might be { success: true, data: User } directly for this endpoint
+      // based on UserController: res.json({ success: true, data: profile })
+      // But let's check the type. UserController returns `profile` which is the user object.
+      // So response.data is User.
+
+      const user = response.data as unknown as User; // correcting type inference if AuthResponse doesn't match perfectly
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+      return user;
+    }
+    throw new Error(response.error || response.message || 'Falha ao atualizar perfil.');
+  },
+
   getCurrentUser(): User | null {
     if (typeof window === 'undefined') return null;
     const userStr = localStorage.getItem('user');

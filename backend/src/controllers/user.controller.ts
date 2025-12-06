@@ -21,6 +21,16 @@ export class UserController {
       data: profile,
     });
   }
+
+  async updatePassword(req: AuthRequest, res: Response) {
+    const userId = req.user!.id;
+    const { currentPassword, newPassword } = req.body;
+    await userService.updatePassword(userId, currentPassword, newPassword);
+    res.json({
+      success: true,
+      message: 'Senha atualizada com sucesso',
+    });
+  }
 }
 
 export const userController = new UserController();

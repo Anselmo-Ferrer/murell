@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
@@ -9,9 +9,12 @@ import { Label } from './ui/label';
 import { useBoardContext, transformBackendCard } from '@/contexts/BoardContext';
 import { cardService } from '@/services/card.service';
 import { useToast } from '@/hooks/use-toast';
+import { Card } from '@/data/mockData';
 
-interface CreateCardDialogProps {
-  children: React.ReactNode;
+interface EditCardDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  card: Card;
   boardId: string;
   columnId: string;
 }
@@ -26,23 +29,21 @@ const labelOptions = [
   { value: 'blue', label: 'Blue', class: 'bg-[hsl(var(--label-blue))]' },
 ];
 
-export const CreateCardDialog = ({ children, boardId, columnId }: CreateCardDialogProps) => {
-  const [open, setOpen] = useState(false);
+export const EditCardDialog = ({ open, onOpenChange, card, boardId, columnId }: EditCardDialogProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const [imageUrl, setImageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { addCard, loadBoardColumns } = useBoardContext();
+  const { updateCard, loadBoardColumns } = useBoardContext();
   const { toast } = useToast();
 
-  const toggleLabel = (label: string) => {
-    setSelectedLabels((prev) =>
-      prev.includes(label)
-        ? prev.filter((l) => l !== label)
-        : [...prev, label]
-    );
-  };
+  useEffect(() => {
+    if (card) {
+      setTitle(card.title);
+      setDescription(card.description || '');
+      setImageUrl(card.image || '');
+    }
+  }, [card]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,45 +53,28 @@ export const CreateCardDialog = ({ children, boardId, columnId }: CreateCardDial
     setIsLoading(true);
 
     try {
-      const newCard = await cardService.createCard(columnId, {
+      const updatedCard = await cardService.updateCard(card.id, {
         title: title.trim(),
         description: description.trim() || undefined,
         image: imageUrl.trim() || undefined,
       });
 
-      // Add labels if any selected
-      for (const labelColor of selectedLabels) {
-        try {
-          await cardService.addLabel(newCard.id, {
-            name: labelColor,
-            color: labelColor,
-          });
-        } catch (error) {
-          console.error('Failed to add label:', error);
-        }
-      }
-
-      // Reload the card with all data including labels
-      const fullCard = await cardService.getCardById(newCard.id);
+      // Reload the card with all data
+      const fullCard = await cardService.getCardById(card.id);
       const transformedCard = transformBackendCard(fullCard);
       
-      addCard(boardId, columnId, transformedCard);
+      updateCard(boardId, columnId, transformedCard);
       await loadBoardColumns(boardId);
       
       toast({
-        title: 'Card criado!',
-        description: 'O card foi criado com sucesso.',
+        title: 'Card atualizado!',
+        description: 'O card foi atualizado com sucesso.',
       });
       
-      // Reset form
-      setTitle('');
-      setDescription('');
-      setSelectedLabels([]);
-      setImageUrl('');
-      setOpen(false);
+      onOpenChange(false);
     } catch (error) {
       toast({
-        title: 'Erro ao criar card',
+        title: 'Erro ao atualizar card',
         description: error instanceof Error ? error.message : 'Tente novamente mais tarde.',
         variant: 'destructive',
       });
@@ -100,25 +84,22 @@ export const CreateCardDialog = ({ children, boardId, columnId }: CreateCardDial
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Criar novo card</DialogTitle>
+          <DialogTitle>Editar card</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="card-title">Título</Label>
+            <Label htmlFor="card-title">Título *</Label>
             <Input
               id="card-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Digite o título do card"
               required
+              autoFocus
               disabled={isLoading}
-              className='mt-3'
             />
           </div>
 
@@ -131,31 +112,7 @@ export const CreateCardDialog = ({ children, boardId, columnId }: CreateCardDial
               placeholder="Digite a descrição do card"
               rows={3}
               disabled={isLoading}
-              className='mt-3'
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Labels</Label>
-            <div className="flex flex-wrap gap-2 mt-3">
-              {labelOptions.map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => toggleLabel(option.value)}
-                  disabled={isLoading}
-                  className={`h-8 px-4 rounded-full text-xs font-medium text-white transition-all ${
-                    option.class
-                  } ${
-                    selectedLabels.includes(option.value)
-                      ? 'ring-2 ring-offset-2 ring-primary'
-                      : 'opacity-60 hover:opacity-100'
-                  } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
           </div>
 
           <div className="space-y-2">
@@ -167,7 +124,6 @@ export const CreateCardDialog = ({ children, boardId, columnId }: CreateCardDial
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://example.com/image.jpg"
               disabled={isLoading}
-              className='mt-3'
             />
             {imageUrl && (
               <div className="mt-2 rounded-md overflow-hidden border">
@@ -187,13 +143,13 @@ export const CreateCardDialog = ({ children, boardId, columnId }: CreateCardDial
             <Button 
               type="button" 
               variant="outline" 
-              onClick={() => setOpen(false)}
+              onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Criando...' : 'Criar Card'}
+              {isLoading ? 'Salvando...' : 'Salvar'}
             </Button>
           </div>
         </form>
@@ -201,3 +157,4 @@ export const CreateCardDialog = ({ children, boardId, columnId }: CreateCardDial
     </Dialog>
   );
 };
+
