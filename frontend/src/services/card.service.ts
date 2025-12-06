@@ -11,6 +11,7 @@ export interface CreateCardData {
 export interface UpdateCardData {
   title?: string;
   description?: string;
+  image?: string;
   position?: number;
 }
 
