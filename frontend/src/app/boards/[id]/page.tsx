@@ -202,7 +202,7 @@ const BoardDetailContent = () => {
               </div> */}
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
               <div className="flex -space-x-2">
                 {board.members.slice(0, 4).map((member) => (
                   <Avatar key={member.id} className="h-8 w-8 border-2 border-card">
@@ -216,7 +216,7 @@ const BoardDetailContent = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -229,7 +229,7 @@ const BoardDetailContent = () => {
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex gap-3 h-full">
+          <div className="flex gap-3 h-full after:content-[''] after:w-6 after:h-full after:flex-shrink-0">
             {columns.map((column) => (
               <BoardColumn key={column.id} column={column} boardId={id || ''} />
             ))}
@@ -237,15 +237,20 @@ const BoardDetailContent = () => {
           </div>
           <DragOverlay>
             {activeCardId && (() => {
-              const card = columns
-                .flatMap((col) => col.cards)
-                .find((c) => c.id === activeCardId);
+              const activeColumn = columns.find((col) =>
+                col.cards.some((c) => c.id === activeCardId)
+              );
+              const card = activeColumn?.cards.find((c) => c.id === activeCardId);
               
-              if (!card) return null;
+              if (!card || !activeColumn) return null;
 
               return (
                 <div className="w-[304px] rotate-3 opacity-90">
-                  <TaskCard card={card} />
+                  <TaskCard 
+                    card={card} 
+                    boardId={id || ''} 
+                    columnId={activeColumn.id} 
+                  />
                 </div>
               );
             })()}

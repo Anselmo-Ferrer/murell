@@ -1,25 +1,33 @@
 'use client';
 
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { useBoardContext, transformBackendColumn } from '@/contexts/BoardContext';
 import { columnService } from '@/services/column.service';
 import { useToast } from '@/hooks/use-toast';
+import { Column } from '@/data/mockData';
 
-interface CreateColumnDialogProps {
-  children: React.ReactNode;
+interface EditColumnDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  column: Column;
   boardId: string;
 }
 
-export const CreateColumnDialog = ({ children, boardId }: CreateColumnDialogProps) => {
-  const [open, setOpen] = useState(false);
+export const EditColumnDialog = ({ open, onOpenChange, column, boardId }: EditColumnDialogProps) => {
   const [title, setTitle] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { addColumn, loadBoardColumns } = useBoardContext();
+  const { updateColumn, loadBoardColumns } = useBoardContext();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (column) {
+      setTitle(column.title);
+    }
+  }, [column]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,25 +37,23 @@ export const CreateColumnDialog = ({ children, boardId }: CreateColumnDialogProp
     setIsLoading(true);
 
     try {
-      const newColumn = await columnService.createColumn(boardId, {
+      const updatedColumn = await columnService.updateColumn(column.id, {
         title: title.trim(),
       });
 
-      const transformedColumn = transformBackendColumn(newColumn);
-      addColumn(boardId, transformedColumn);
+      const transformedColumn = transformBackendColumn(updatedColumn);
+      updateColumn(boardId, transformedColumn);
       await loadBoardColumns(boardId);
       
       toast({
-        title: 'Coluna criada!',
-        description: 'A coluna foi criada com sucesso.',
+        title: 'Coluna atualizada!',
+        description: 'A coluna foi atualizada com sucesso.',
       });
       
-      // Reset form
-      setTitle('');
-      setOpen(false);
+      onOpenChange(false);
     } catch (error) {
       toast({
-        title: 'Erro ao criar coluna',
+        title: 'Erro ao atualizar coluna',
         description: error instanceof Error ? error.message : 'Tente novamente mais tarde.',
         variant: 'destructive',
       });
@@ -57,17 +63,14 @@ export const CreateColumnDialog = ({ children, boardId }: CreateColumnDialogProp
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
-          <DialogTitle>Criar nova coluna</DialogTitle>
+          <DialogTitle>Editar coluna</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="column-title">Título da coluna</Label>
+            <Label htmlFor="column-title">Título da coluna *</Label>
             <Input
               id="column-title"
               value={title}
@@ -76,7 +79,6 @@ export const CreateColumnDialog = ({ children, boardId }: CreateColumnDialogProp
               required
               autoFocus
               disabled={isLoading}
-              className='mt-3'
             />
           </div>
 
@@ -84,13 +86,13 @@ export const CreateColumnDialog = ({ children, boardId }: CreateColumnDialogProp
             <Button 
               type="button" 
               variant="outline" 
-              onClick={() => setOpen(false)}
+              onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Criando...' : 'Criar Coluna'}
+              {isLoading ? 'Salvando...' : 'Salvar'}
             </Button>
           </div>
         </form>
@@ -98,3 +100,4 @@ export const CreateColumnDialog = ({ children, boardId }: CreateColumnDialogProp
     </Dialog>
   );
 };
+

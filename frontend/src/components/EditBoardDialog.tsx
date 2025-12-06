@@ -1,19 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { useBoardContext, transformBackendBoard } from '@/contexts/BoardContext';
-import { Board } from '@/data/mockData';
 import { boardService } from '@/services/board.service';
 import { useToast } from '@/hooks/use-toast';
+import { Board } from '@/data/mockData';
 
-interface CreateBoardDialogProps {
-  children: React.ReactNode;
+interface EditBoardDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  board: Board;
 }
 
 const colorOptions = [
@@ -27,14 +28,21 @@ const colorOptions = [
   { value: 'cyan', label: 'Cyan', class: 'bg-[hsl(var(--pastel-cyan))]' },
 ];
 
-export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
-  const [open, setOpen] = useState(false);
+export const EditBoardDialog = ({ open, onOpenChange, board }: EditBoardDialogProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [color, setColor] = useState('blue');
   const [isLoading, setIsLoading] = useState(false);
-  const { addBoard, refreshBoards } = useBoardContext();
+  const { refreshBoards } = useBoardContext();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (board) {
+      setTitle(board.title);
+      setDescription(board.description || '');
+      setColor(board.color || 'blue');
+    }
+  }, [board]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,31 +52,23 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
     setIsLoading(true);
 
     try {
-      const newBoard = await boardService.createBoard({
+      await boardService.updateBoard(board.id, {
         title: title.trim(),
         description: description.trim() || undefined,
         color: color || undefined,
       });
 
-      // Transform backend board to frontend format
-      const transformedBoard = transformBackendBoard(newBoard);
-
-      addBoard(transformedBoard);
       await refreshBoards();
       
       toast({
-        title: 'Board criado!',
-        description: 'O board foi criado com sucesso.',
+        title: 'Board atualizado!',
+        description: 'O board foi atualizado com sucesso.',
       });
       
-      // Reset form
-      setTitle('');
-      setDescription('');
-      setColor('blue');
-      setOpen(false);
+      onOpenChange(false);
     } catch (error) {
       toast({
-        title: 'Erro ao criar board',
+        title: 'Erro ao atualizar board',
         description: error instanceof Error ? error.message : 'Tente novamente mais tarde.',
         variant: 'destructive',
       });
@@ -78,30 +78,27 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Criar novo board</DialogTitle>
+          <DialogTitle>Editar board</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Título</Label>
+            <Label htmlFor="title">Título *</Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Digite o título do board"
               required
+              autoFocus
               disabled={isLoading}
-              className='mt-3'
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Descrição (opcional)</Label>
+            <Label htmlFor="description">Descrição</Label>
             <Textarea
               id="description"
               value={description}
@@ -109,13 +106,12 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
               placeholder="Digite a descrição do board"
               rows={3}
               disabled={isLoading}
-              className='mt-3'
             />
           </div>
 
           <div className="space-y-2">
             <Label>Cor</Label>
-            <div className="grid grid-cols-4 gap-2 mt-3">
+            <div className="grid grid-cols-4 gap-2">
               {colorOptions.map((option) => (
                 <button
                   key={option.value}
@@ -137,13 +133,13 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
             <Button 
               type="button" 
               variant="outline" 
-              onClick={() => setOpen(false)}
+              onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Criando...' : 'Criar Board'}
+              {isLoading ? 'Salvando...' : 'Salvar'}
             </Button>
           </div>
         </form>
@@ -151,3 +147,4 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
     </Dialog>
   );
 };
+
