@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import { TaskCard } from './TaskCard';
 import { CreateCardDialog } from './CreateCardDialog';
 import { EditColumnDialog } from './EditColumnDialog';
+import { DeleteAlert } from './DeleteAlert';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,24 +37,31 @@ export const BoardColumn = ({ column, boardId }: BoardColumnProps) => {
 
   const cardIds = column.cards.map((card) => card.id);
 
-  const handleDelete = async () => {
-    if (!confirm('Tem certeza que deseja apagar esta coluna? Todos os cards serão removidos.')) {
-      return;
-    }
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const handleDeleteClick = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
+      setIsLoading(true);
       await columnService.deleteColumn(column.id);
       await loadBoardColumns(boardId);
       toast({
         title: 'Coluna apagada!',
         description: 'A coluna foi apagada com sucesso.',
       });
+      setDeleteDialogOpen(false);
     } catch (error) {
       toast({
         title: 'Erro ao apagar coluna',
         description: error instanceof Error ? error.message : 'Tente novamente mais tarde.',
         variant: 'destructive',
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -81,7 +89,7 @@ export const BoardColumn = ({ column, boardId }: BoardColumnProps) => {
                   Editar
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                <DropdownMenuItem onClick={handleDeleteClick} className="text-destructive">
                   <Trash2 className="h-4 w-4 mr-2" />
                   Apagar
                 </DropdownMenuItem>
@@ -114,6 +122,15 @@ export const BoardColumn = ({ column, boardId }: BoardColumnProps) => {
       onOpenChange={setEditDialogOpen}
       column={column}
       boardId={boardId}
+    />
+
+    <DeleteAlert
+      open={deleteDialogOpen}
+      onOpenChange={setDeleteDialogOpen}
+      title="Apagar Coluna"
+      description="Tem certeza que deseja apagar esta coluna? Todos os cards nela também serão apagados permanentemente."
+      onConfirm={handleConfirmDelete}
+      isLoading={isLoading}
     />
     </>
   );

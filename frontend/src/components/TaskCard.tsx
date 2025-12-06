@@ -6,6 +6,7 @@ import { Card } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { EditCardDialog } from './EditCardDialog';
+import { DeleteAlert } from './DeleteAlert';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,25 +58,32 @@ export const TaskCard = ({ card, boardId, columnId }: TaskCardProps) => {
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const handleDelete = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!confirm('Tem certeza que deseja apagar este card?')) {
-      return;
-    }
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
+      setIsLoading(true);
       await cardService.deleteCard(card.id);
       await loadBoardColumns(boardId);
       toast({
         title: 'Card apagado!',
         description: 'O card foi apagado com sucesso.',
       });
+      setDeleteDialogOpen(false);
     } catch (error) {
       toast({
         title: 'Erro ao apagar card',
         description: error instanceof Error ? error.message : 'Tente novamente mais tarde.',
         variant: 'destructive',
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -106,7 +114,7 @@ export const TaskCard = ({ card, boardId, columnId }: TaskCardProps) => {
                   Editar
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                <DropdownMenuItem onClick={handleDeleteClick} className="text-destructive">
                   <Trash2 className="h-4 w-4 mr-2" />
                   Apagar
                 </DropdownMenuItem>
@@ -187,6 +195,15 @@ export const TaskCard = ({ card, boardId, columnId }: TaskCardProps) => {
       card={card}
       boardId={boardId}
       columnId={columnId}
+    />
+
+    <DeleteAlert
+      open={deleteDialogOpen}
+      onOpenChange={setDeleteDialogOpen}
+      title="Apagar Card"
+      description="Tem certeza que deseja apagar este card? Esta ação não pode ser desfeita."
+      onConfirm={handleConfirmDelete}
+      isLoading={isLoading}
     />
     </>
   );

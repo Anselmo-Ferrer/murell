@@ -5,6 +5,7 @@ import { ArrowRight, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { EditBoardDialog } from './EditBoardDialog';
+import { DeleteAlert } from './DeleteAlert';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,30 +38,35 @@ const colorMap: Record<string, string> = {
 
 export const BoardCard = ({ board }: BoardCardProps) => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { refreshBoards } = useBoardContext();
   const { toast } = useToast();
 
-  const handleDelete = async (e: React.MouseEvent) => {
+  const handleDeleteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (!confirm('Tem certeza que deseja apagar este board? Todos os dados serão perdidos.')) {
-      return;
-    }
+    setDeleteDialogOpen(true);
+  };
 
+  const handleConfirmDelete = async () => {
     try {
+      setIsLoading(true);
       await boardService.deleteBoard(board.id);
       await refreshBoards();
       toast({
         title: 'Board apagado!',
         description: 'O board foi apagado com sucesso.',
       });
+      setDeleteDialogOpen(false);
     } catch (error) {
       toast({
         title: 'Erro ao apagar board',
         description: error instanceof Error ? error.message : 'Tente novamente mais tarde.',
         variant: 'destructive',
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -96,7 +102,7 @@ export const BoardCard = ({ board }: BoardCardProps) => {
                 Editar
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+              <DropdownMenuItem onClick={handleDeleteClick} className="text-destructive">
                 <Trash2 className="h-4 w-4 mr-2" />
                 Apagar
               </DropdownMenuItem>
@@ -136,6 +142,15 @@ export const BoardCard = ({ board }: BoardCardProps) => {
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         board={board}
+      />
+
+      <DeleteAlert
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Apagar Board"
+        description="Tem certeza que deseja apagar este board? Todos os dados serão perdidos permanentemente."
+        onConfirm={handleConfirmDelete}
+        isLoading={isLoading}
       />
     </>
   );
