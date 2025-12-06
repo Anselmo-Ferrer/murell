@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -216,9 +217,8 @@ const Settings = () => {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="current-password">Senha Atual</Label>
-              <Input 
+              <PasswordInput 
                 id="current-password" 
-                type="password"
                 value={passwords.current}
                 onChange={(e) => setPasswords({...passwords, current: e.target.value})} 
               />
@@ -226,9 +226,8 @@ const Settings = () => {
 
             <div className="space-y-2">
               <Label htmlFor="new-password">Nova Senha</Label>
-              <Input 
+              <PasswordInput 
                 id="new-password" 
-                type="password"
                 value={passwords.new}
                 onChange={(e) => setPasswords({...passwords, new: e.target.value})} 
               />
@@ -236,9 +235,8 @@ const Settings = () => {
 
             <div className="space-y-2">
               <Label htmlFor="confirm-password">Confirmar Nova Senha</Label>
-              <Input 
+              <PasswordInput 
                 id="confirm-password" 
-                type="password"
                 value={passwords.confirm}
                 onChange={(e) => setPasswords({...passwords, confirm: e.target.value})} 
               />
