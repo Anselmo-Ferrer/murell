@@ -58,6 +58,13 @@ export const authService = {
     }
   },
 
+  async updatePassword(currentPassword: string, newPassword: string): Promise<void> {
+    const response = await api.put('/users/password', { currentPassword, newPassword });
+    if (!response.success) {
+      throw new Error(response.error || response.message || 'Falha ao atualizar senha.');
+    }
+  },
+
   getCurrentUser(): User | null {
     if (typeof window === 'undefined') return null;
     const userStr = localStorage.getItem('user');

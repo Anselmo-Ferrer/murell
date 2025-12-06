@@ -53,7 +53,16 @@ const Settings = () => {
     });
   };
 
-  const handleUpdatePassword = () => {
+  const handleUpdatePassword = async () => {
+    if (passwords.new.length < 6) {
+      toast({
+        title: "Senha inválida",
+        description: "A nova senha deve ter pelo menos 6 caracteres.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (passwords.new !== passwords.confirm) {
       toast({
         title: "Erro ao atualizar senha",
@@ -62,12 +71,21 @@ const Settings = () => {
       });
       return;
     }
-    // Here you would call the API to update password
-    toast({
-      title: "Senha atualizada",
-      description: "Sua senha foi alterada com sucesso.",
-    });
-    setPasswords({ current: "", new: "", confirm: "" });
+
+    try {
+      await authService.updatePassword(passwords.current, passwords.new);
+      toast({
+        title: "Senha atualizada",
+        description: "Sua senha foi alterada com sucesso.",
+      });
+      setPasswords({ current: "", new: "", confirm: "" });
+    } catch (error) {
+      toast({
+        title: "Erro ao atualizar senha",
+        description: error instanceof Error ? error.message : "Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleLogout = () => {

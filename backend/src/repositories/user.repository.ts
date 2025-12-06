@@ -20,7 +20,7 @@ export class UserRepository {
     });
   }
 
-  async update(id: string, data: Partial<{ name: string; avatar: string; bio: string }>): Promise<User> {
+  async update(id: string, data: Partial<{ name: string; avatar: string; bio: string; password: string }>): Promise<User> {
     return prisma.user.update({
       where: { id },
       data,
