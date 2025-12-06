@@ -229,7 +229,7 @@ const BoardDetailContent = () => {
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex gap-3 h-full">
+          <div className="flex gap-3 h-full after:content-[''] after:w-6 after:h-full after:flex-shrink-0">
             {columns.map((column) => (
               <BoardColumn key={column.id} column={column} boardId={id || ''} />
             ))}

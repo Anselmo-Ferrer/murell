@@ -46,12 +46,32 @@ const Settings = () => {
     });
   }, [router]);
 
-  const handleSaveProfile = () => {
-    // Here you would call the API to update profile
-    toast({
-      title: "Perfil atualizado",
-      description: "Suas informações foram salvas com sucesso.",
-    });
+  const handleSaveProfile = async () => {
+    try {
+      const updatedUser = await authService.updateProfile({
+        name: profile.name,
+        bio: profile.bio,
+        // avatar TODO: Implement avatar upload
+      });
+      
+      setProfile({
+        ...profile,
+        name: updatedUser.name,
+        bio: updatedUser.bio || "",
+        avatar: updatedUser.avatar || "",
+      });
+
+      toast({
+        title: "Perfil atualizado",
+        description: "Suas informações foram salvas com sucesso.",
+      });
+    } catch (error) {
+       toast({
+        title: "Erro ao atualizar perfil",
+        description: error instanceof Error ? error.message : "Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleUpdatePassword = async () => {
