@@ -110,7 +110,7 @@ export const CreateCardDialog = ({ children, boardId, columnId }: CreateCardDial
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="card-title">Título *</Label>
+            <Label htmlFor="card-title">Título</Label>
             <Input
               id="card-title"
               value={title}
@@ -118,6 +118,7 @@ export const CreateCardDialog = ({ children, boardId, columnId }: CreateCardDial
               placeholder="Digite o título do card"
               required
               disabled={isLoading}
+              className='mt-3'
             />
           </div>
 
@@ -130,12 +131,13 @@ export const CreateCardDialog = ({ children, boardId, columnId }: CreateCardDial
               placeholder="Digite a descrição do card"
               rows={3}
               disabled={isLoading}
+              className='mt-3'
             />
           </div>
 
           <div className="space-y-2">
             <Label>Labels</Label>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 mt-3">
               {labelOptions.map((option) => (
                 <button
                   key={option.value}
@@ -165,6 +167,7 @@ export const CreateCardDialog = ({ children, boardId, columnId }: CreateCardDial
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://example.com/image.jpg"
               disabled={isLoading}
+              className='mt-3'
             />
             {imageUrl && (
               <div className="mt-2 rounded-md overflow-hidden border">

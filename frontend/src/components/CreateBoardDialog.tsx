@@ -88,7 +88,7 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Título *</Label>
+            <Label htmlFor="title">Título</Label>
             <Input
               id="title"
               value={title}
@@ -96,11 +96,12 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
               placeholder="Digite o título do board"
               required
               disabled={isLoading}
+              className='mt-3'
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Descrição</Label>
+            <Label htmlFor="description">Descrição (opcional)</Label>
             <Textarea
               id="description"
               value={description}
@@ -108,12 +109,13 @@ export const CreateBoardDialog = ({ children }: CreateBoardDialogProps) => {
               placeholder="Digite a descrição do board"
               rows={3}
               disabled={isLoading}
+              className='mt-3'
             />
           </div>
 
           <div className="space-y-2">
             <Label>Cor</Label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-2 mt-3">
               {colorOptions.map((option) => (
                 <button
                   key={option.value}

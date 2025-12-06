@@ -67,7 +67,7 @@ export const CreateColumnDialog = ({ children, boardId }: CreateColumnDialogProp
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="column-title">Título da coluna *</Label>
+            <Label htmlFor="column-title">Título da coluna</Label>
             <Input
               id="column-title"
               value={title}
@@ -76,6 +76,7 @@ export const CreateColumnDialog = ({ children, boardId }: CreateColumnDialogProp
               required
               autoFocus
               disabled={isLoading}
+              className='mt-3'
             />
           </div>
 
