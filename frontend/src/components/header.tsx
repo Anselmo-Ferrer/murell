@@ -14,7 +14,7 @@ import { BoardContext } from '@/contexts/BoardContext';
 export const Header = () => {
   const router = useRouter();
   const pathname = usePathname()
-  const [user, setUser] = useState(authService.getCurrentUser());
+  const [user, setUser] = useState<any>(null);
   const [userInitials, setUserInitials] = useState('U');
   const [inBoard, setInBoard] = useState(false)
   const [showSearch, setShowSearch] = useState(false);
