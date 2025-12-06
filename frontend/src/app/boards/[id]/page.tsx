@@ -202,7 +202,7 @@ const BoardDetailContent = () => {
               </div> */}
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
               <div className="flex -space-x-2">
                 {board.members.slice(0, 4).map((member) => (
                   <Avatar key={member.id} className="h-8 w-8 border-2 border-card">
@@ -216,7 +216,7 @@ const BoardDetailContent = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
