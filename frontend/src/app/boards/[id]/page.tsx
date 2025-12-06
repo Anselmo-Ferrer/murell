@@ -237,15 +237,20 @@ const BoardDetailContent = () => {
           </div>
           <DragOverlay>
             {activeCardId && (() => {
-              const card = columns
-                .flatMap((col) => col.cards)
-                .find((c) => c.id === activeCardId);
+              const activeColumn = columns.find((col) =>
+                col.cards.some((c) => c.id === activeCardId)
+              );
+              const card = activeColumn?.cards.find((c) => c.id === activeCardId);
               
-              if (!card) return null;
+              if (!card || !activeColumn) return null;
 
               return (
                 <div className="w-[304px] rotate-3 opacity-90">
-                  <TaskCard card={card} />
+                  <TaskCard 
+                    card={card} 
+                    boardId={id || ''} 
+                    columnId={activeColumn.id} 
+                  />
                 </div>
               );
             })()}
