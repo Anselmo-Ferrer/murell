@@ -21,9 +21,11 @@ interface BoardContextType {
   updateColumn: (boardId: string, column: Column) => void;
   updateCard: (boardId: string, columnId: string, card: Card) => void;
   moveCard: (boardId: string, cardId: string, sourceColumnId: string, targetColumnId: string, newPosition: number) => Promise<void>;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 }
 
-const BoardContext = createContext<BoardContextType | undefined>(undefined);
+export const BoardContext = createContext<BoardContextType | undefined>(undefined);
 
 // Transform backend board to frontend format
 export const transformBackendBoard = (backendBoard: BackendBoard): Board => {
@@ -105,6 +107,7 @@ export const BoardProvider = ({ children }: { children: ReactNode }) => {
   const [boards, setBoards] = useState<Board[]>([]);
   const [boardColumns, setBoardColumns] = useState<Record<string, Column[]>>(initialBoardColumns);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const refreshBoards = async () => {
     if (!authService.isAuthenticated()) {
@@ -276,6 +279,8 @@ export const BoardProvider = ({ children }: { children: ReactNode }) => {
       updateColumn,
       updateCard,
       moveCard,
+      searchQuery,
+      setSearchQuery,
     }}>
       {children}
     </BoardContext.Provider>
