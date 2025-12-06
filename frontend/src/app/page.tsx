@@ -1,8 +1,8 @@
-import { ArrowRight, CheckCircle, LayoutDashboard, Users, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle, LayoutDashboard, Users, Workflow, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
-import heroImage from '@/assets/images/CardsPage.png'
+import heroImage from '@/assets/images/HeroImage.png'
 
 const Landing = () => {
   return (
@@ -34,7 +34,7 @@ const Landing = () => {
             </span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Murell ajuda equipes a moverem projetos para frente. Colabore, gerencie 
+            Murell ajuda equipes a moverem projetos para frente. Planeje, gerencie 
             e alcance novos patamares de produtividade.
           </p>
           <div className="flex items-center justify-center gap-4 pt-4">
@@ -87,11 +87,11 @@ const Landing = () => {
 
           <div className="space-y-4 p-8 rounded-xl border bg-card hover:shadow-lg transition-all animate-fade-in" style={{ animationDelay: '0.1s' }}>
             <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Users className="w-6 h-6 text-primary" />
+              <Workflow className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold">Colaboração em Tempo Real</h3>
+            <h3 className="text-xl font-semibold">Fluxos de Trabalho Flexíveis</h3>
             <p className="text-muted-foreground">
-              Trabalhe junto com sua equipe, comente e receba atualizações instantâneas.
+              Adapte o Murell ao seu processo. Crie fluxos, listas e estruturas que combinam com seu estilo de trabalho.
             </p>
           </div>
 

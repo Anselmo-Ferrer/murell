@@ -9,7 +9,7 @@ import { BoardProvider, useBoardContext } from '@/contexts/BoardContext';
 type FilterType = 'all' | 'new' | 'recently-updated';
 
 const BoardsContent = () => {
-  const { boards, isLoading } = useBoardContext();
+  const { boards, isLoading, searchQuery } = useBoardContext();
   const [filter, setFilter] = useState<FilterType>('all');
   
   // Calcula a data de 3 dias atrás
@@ -29,11 +29,20 @@ const BoardsContent = () => {
   });
   
   // Seleciona os boards baseado no filtro
-  const displayBoards = filter === 'all' 
+  let displayBoards = filter === 'all' 
     ? boards 
     : filter === 'new' 
     ? newBoards 
     : recentlyUpdated;
+
+  // Apply search filter
+  if (searchQuery) {
+    const query = searchQuery.toLowerCase();
+    displayBoards = displayBoards.filter(board => 
+      board.title.toLowerCase().includes(query) || 
+      (board.description && board.description.toLowerCase().includes(query))
+    );
+  }
 
   const getFilterLabel = () => {
     switch(filter) {

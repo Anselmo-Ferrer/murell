@@ -221,7 +221,7 @@ const BoardDetailContent = () => {
         </div>
       </div>
 
-      <main className="container max-w-full mx-auto px-6 py-6 overflow-x-auto h-[calc(100vh-10rem)]">
+      <main className="container max-w-full mx-auto px-6 py-6 overflow-x-auto h-[calc(100vh-10rem)] custom-scrollbar">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
